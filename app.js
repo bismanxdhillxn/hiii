@@ -7,7 +7,40 @@ let tasks = [];
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('public'));
+const products = [
+    { name: 'Laptop', price: 1000 },
+    { name: 'Mouse', price: 20 },
+    { name: 'Keyboard', price: 50 },
+    { name: 'Monitor', price: 150 },
+];
+const users = {
+    alice: { age: 23, hobby: 'swimming' },
+    bob: { age: 25, hobby: 'reading' },
+    charlie: { age: 21, hobby: 'painting' },
+};
 
+
+app.get('/', (req, res) => {
+    res.render('profile');
+});
+
+app.get('/profile/:username', (req, res) => {
+    const { username } = req.params;
+    const user = users[username];
+    if (!user) {
+        res.status(404).send('User not found');
+    } else {
+        res.render('pindex', { username, ...user });
+    }
+});
+app.get('/products', (req, res) => {
+    let search = req.query.search;
+    if(!search) {
+        return res.render('partial', { products });
+    }
+    let filteredProducts = products.filter(product => product.name.toLowerCase().includes(search.toLowerCase()));
+    res.render('partial', { products:filteredProducts });
+});
 app.get('/welcome', (req, res) => {
     const user = 'John'; 
 
